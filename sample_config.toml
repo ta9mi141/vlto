@@ -1,0 +1,26 @@
+# Configuration file must be put to $HOME/.config/vlto.toml
+
+# Your api token can be found in https://toggl.com/app/profile
+APIToken = "1971800d4d82861d8f2c1651fea4d212"
+
+# A workspace which has time entries of your projects
+WorkSpaceID = "1234567"
+
+
+# Each project settings
+#   Name            Project name defined in Toggl
+#   Goal            Working hours you try to achieve
+#   StartDate       A date when aggregation of time entries start
+#   Iteration       Number of weeks in 1 iteration
+
+[[Projects]]
+Name = "Sample Project 1"
+Goal = 1000
+StartDate = 2016-10-11
+Iteration = 1
+
+[[Projects]]
+Name = "Sample Project 2"
+Goal = 2000
+StartDate = 2019-01-01
+Iteration = 2
