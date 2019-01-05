@@ -6,6 +6,7 @@ vlto shows velocity of your projects of [Toggl](https://toggl.com)
 ## Requirements
 
 * Go 1.x
+* Make
 
 ## Author
 
