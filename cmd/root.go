@@ -7,7 +7,13 @@ import (
 	"os"
 )
 
-var rootCmd = &cobra.Command{}
+var rootCmd = &cobra.Command{
+	Use:     "vlto",
+	Short:   "vlto shows velocity of your projects of Toggl",
+	Version: "0.0",
+	Run: func(cmd *cobra.Command, args []string) {
+	},
+}
 
 func init() {
 	cobra.OnInitialize(initConfig)
