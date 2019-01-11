@@ -2,14 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
-)
-
-const (
-	defaultCfgFile string = "~/.config/vlto.toml"
 )
 
 // flags
@@ -28,18 +23,19 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(
 		&cfgFile,
 		"config",
-		defaultCfgFile,
-		"config file",
+		"",
+		"config file (default is $HOME/.config/vlto.toml)",
 	)
 }
 
 func initConfig() {
-	config, err := homedir.Expand(cfgFile)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	viper.AddConfigPath("$HOME/.config") // Adding $HOME/.config as first search path
+	viper.SetConfigName("vlto")          // Name of config file (without extention)
+
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
 	}
-	viper.SetConfigFile(config)
+
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
