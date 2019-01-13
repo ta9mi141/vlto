@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/it-akumi/vlto/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 )
 
@@ -29,17 +29,7 @@ func init() {
 }
 
 func initConfig() {
-	viper.AddConfigPath("$HOME/.config") // Adding $HOME/.config as first search path
-	viper.SetConfigName("vlto")          // Name of config file (without extention)
-
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	}
-
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	config.Init(cfgFile)
 }
 
 func Execute() {
