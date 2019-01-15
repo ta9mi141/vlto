@@ -6,8 +6,9 @@ import (
 
 const (
 	basicAuthPassword          string = "api_token"
-	togglSummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
 	userAgent                  string = "vlto"
+	togglSummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
+	togglWeeklyReportEndPoint  string = "https://toggl.com/reports/api/v2/weekly"
 )
 
 type togglReportsApiClient struct {
