@@ -8,7 +8,6 @@ const (
 	basicAuthPassword          string = "api_token"
 	userAgent                  string = "vlto"
 	togglSummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
-	togglWeeklyReportEndPoint  string = "https://toggl.com/reports/api/v2/weekly"
 )
 
 type togglReportsApiClient struct {
