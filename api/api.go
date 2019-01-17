@@ -5,15 +5,16 @@ import (
 )
 
 const (
-	basicAuthPassword          string = "api_token"
-	userAgent                  string = "vlto"
-	togglSummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
+	BasicAuthPassword          string = "api_token"
+	UserAgent                  string = "vlto"
+	TogglSummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
 )
 
-type togglReportsApiClient struct {
-	client            *http.Client
-	apiToken          string
-	basicAuthPassword string
-	userAgent         string
-	workSpaceId       string
+type TogglReportsApiClient struct {
+	Client            *http.Client
+	ApiToken          string
+	WorkSpaceId       string
+	BasicAuthPassword string
+	UserAgent         string
+	EndPoint          string
 }

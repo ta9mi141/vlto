@@ -4,21 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"os"
-	"time"
 )
-
-type projectConfig struct {
-	Name      string
-	Goal      int
-	StartDate time.Time
-	Iteration int
-}
-
-type config struct {
-	ApiToken    string
-	WorkSpaceId string
-	Projects    []projectConfig
-}
 
 func Init(cfgFile string) {
 	viper.AddConfigPath("$HOME/.config") // Adding $HOME/.config as first search path
