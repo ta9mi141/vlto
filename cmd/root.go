@@ -5,8 +5,6 @@ import (
 	"github.com/it-akumi/vlto/api"
 	"github.com/it-akumi/vlto/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"net/http"
 	"os"
 )
 
@@ -18,14 +16,7 @@ var rootCmd = &cobra.Command{
 	Short:   "vlto shows velocity of your projects of Toggl",
 	Version: "0.0",
 	Run: func(cmd *cobra.Command, args []string) {
-		client := &api.TogglReportsApiClient{
-			Client:            &http.Client{},
-			ApiToken:          viper.GetString("apiToken"),
-			WorkSpaceId:       viper.GetString("WorkSpaceId"),
-			BasicAuthPassword: api.BasicAuthPassword,
-			UserAgent:         api.UserAgent,
-			EndPoint:          api.TogglSummaryReportEndPoint,
-		}
+		client := new(api.TogglReportsApiClient)
 		fmt.Printf("%v\n", client)
 	},
 }
