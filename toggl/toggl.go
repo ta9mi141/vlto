@@ -1,4 +1,4 @@
-package api
+package toggl
 
 import (
 	"net/http"
@@ -6,12 +6,12 @@ import (
 )
 
 const (
-	basicAuthPassword          string = "api_token" // Defined in Toggl Reports API v2
-	userAgent                  string = "vlto"
-	TogglSummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
+	basicAuthPassword     string = "api_token" // Defined in Toggl Reports API v2
+	userAgent             string = "vlto"
+	SummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
 )
 
-type TogglReportsApiClient struct {
+type ReportsApiClient struct {
 	Client      *http.Client
 	ApiToken    string
 	WorkSpaceId string
@@ -19,14 +19,14 @@ type TogglReportsApiClient struct {
 	Url         *url.URL
 }
 
-type TogglReportsApiError struct {
+type ReportsApiError struct {
 	Message    string `json:"message"`
 	Tip        string `json:"tip"`
 	StatusCode int    `json:"code"`
 }
 
-type TogglSummaryReport struct {
-	Error *TogglReportsApiError `json:"error,omitempty`
+type SummaryReport struct {
+	Error *ReportsApiError `json:"error,omitempty`
 	Data  []struct {
 		Title struct {
 			Project string `json:"project"`

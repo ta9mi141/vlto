@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/it-akumi/vlto/api"
 	"github.com/it-akumi/vlto/config"
+	"github.com/it-akumi/vlto/toggl"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -16,7 +16,7 @@ var rootCmd = &cobra.Command{
 	Short:   "vlto shows velocity of your projects of Toggl",
 	Version: "0.0",
 	Run: func(cmd *cobra.Command, args []string) {
-		client := new(api.TogglReportsApiClient)
+		client := new(toggl.ReportsApiClient)
 		fmt.Printf("%v\n", client)
 	},
 }
