@@ -1,4 +1,4 @@
-package toggl
+package reports
 
 import (
 	"errors"
@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	basicAuthPassword     string = "api_token" // Defined in Toggl Reports API v2
-	SummaryReportEndPoint string = "https://toggl.com/reports/api/v2/summary"
+	basicAuthPassword string = "api_token" // Defined in Toggl Reports API v2
+	SummaryEndpoint   string = "https://toggl.com/reports/api/v2/summary"
 )
 
-type reportsClient struct {
+type client struct {
 	client            *http.Client
 	basicAuthPassword string
 	apiToken          string
@@ -20,7 +20,7 @@ type reportsClient struct {
 	url               *url.URL
 }
 
-func NewReportsClient(apiToken, workSpaceId, userAgent, endPoint string) (*reportsClient, error) {
+func NewClient(apiToken, workSpaceId, userAgent, endpoint string) (*client, error) {
 	if len(apiToken) == 0 {
 		return nil, errors.New("Missing API token")
 	}
@@ -30,15 +30,15 @@ func NewReportsClient(apiToken, workSpaceId, userAgent, endPoint string) (*repor
 	if len(userAgent) == 0 {
 		return nil, errors.New("Missing user agent")
 	}
-	if len(endPoint) == 0 {
+	if len(endpoint) == 0 {
 		return nil, errors.New("Missing end point")
 	}
-	url, err := url.Parse(endPoint)
+	url, err := url.Parse(endpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	newReportsClient := &reportsClient{
+	newClient := &client{
 		client:            &http.Client{},
 		basicAuthPassword: basicAuthPassword,
 		apiToken:          apiToken,
@@ -46,17 +46,17 @@ func NewReportsClient(apiToken, workSpaceId, userAgent, endPoint string) (*repor
 		userAgent:         userAgent,
 		url:               url,
 	}
-	return newReportsClient, nil
+	return newClient, nil
 }
 
-type ReportsError struct {
+type Error struct {
 	Message    string `json:"message"`
 	Tip        string `json:"tip"`
 	StatusCode int    `json:"code"`
 }
 
-type SummaryReport struct {
-	Error *ReportsError `json:"error,omitempty`
+type Summary struct {
+	Error *Error `json:"error,omitempty`
 	Data  []struct {
 		Title struct {
 			Project string `json:"project"`
