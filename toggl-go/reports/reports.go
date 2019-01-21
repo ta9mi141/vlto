@@ -12,23 +12,15 @@ const (
 )
 
 type client struct {
-	client            *http.Client
-	basicAuthPassword string
-	apiToken          string
-	workSpaceId       string
-	userAgent         string
-	url               *url.URL
+	httpClient *http.Client
+	header     http.Header
+	apiToken   string
+	url        *url.URL
 }
 
-func NewClient(apiToken, workSpaceId, userAgent, endpoint string) (*client, error) {
+func NewClient(apiToken, endpoint string) (*client, error) {
 	if len(apiToken) == 0 {
 		return nil, errors.New("Missing API token")
-	}
-	if len(workSpaceId) == 0 {
-		return nil, errors.New("Missing workspace id")
-	}
-	if len(userAgent) == 0 {
-		return nil, errors.New("Missing user agent")
 	}
 	if len(endpoint) == 0 {
 		return nil, errors.New("Missing end point")
@@ -39,13 +31,13 @@ func NewClient(apiToken, workSpaceId, userAgent, endpoint string) (*client, erro
 	}
 
 	newClient := &client{
-		client:            &http.Client{},
-		basicAuthPassword: basicAuthPassword,
-		apiToken:          apiToken,
-		workSpaceId:       workSpaceId,
-		userAgent:         userAgent,
-		url:               url,
+		httpClient: &http.Client{},
+		header:     make(http.Header),
+		apiToken:   apiToken,
+		url:        url,
 	}
+	newClient.header.Set("Content-type", "application/json")
+
 	return newClient, nil
 }
 

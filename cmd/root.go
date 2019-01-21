@@ -19,8 +19,6 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := reports.NewClient(
 			viper.GetString("apiToken"),
-			viper.GetString("workSpaceId"),
-			"vlto",
 			reports.SummaryEndpoint,
 		)
 		if err != nil {
