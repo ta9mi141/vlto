@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/it-akumi/toggl-go/reports"
 	"github.com/it-akumi/vlto/config"
-	"github.com/it-akumi/vlto/toggl-go/reports"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
