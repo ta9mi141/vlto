@@ -5,23 +5,25 @@ import (
 	"time"
 )
 
-type Config struct {
+type config struct {
 	Name          string
 	Goal          int
 	StartDate     time.Time
 	IterationDays int
 }
 
-type Project struct {
-	Name                  string
-	Goal                  int
-	TotalAchievedHour     int
-	IterationAchievedHour int
-	LastDay               time.Time
+type project struct {
+	name                  string
+	goal                  int
+	totalAchievedHour     int
+	iterationAchievedHour int
+	lastDay               time.Time
 }
 
-func Unmarshal() []Config {
-	var configs []Config
-	viper.UnmarshalKey("Projects", &configs)
-	return configs
+func Unmarshal() ([]config, error) {
+	var configs []config
+	if err := viper.UnmarshalKey("Projects", &configs); err != nil {
+		return configs, err
+	}
+	return configs, nil
 }
