@@ -20,11 +20,11 @@ Goal = 1000
 # Time and timezone are necessary even though they aren't used by application
 StartDate = 2016-10-11T00:00:00+00:00
 
-# Number of weeks in 1 iteration
-Iteration = 1
+# Number of days in 1 iteration
+IterationDays = 7
 
 [[Projects]]
 Name = "Sample Project 2"
 Goal = 2000
 StartDate = 2019-01-01T00:00:00+00:00
-Iteration = 2
+IterationDays = 14
