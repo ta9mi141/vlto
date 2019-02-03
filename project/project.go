@@ -7,14 +7,14 @@ import (
 
 type config struct {
 	Name          string
-	Goal          int
+	Target        int
 	StartDate     time.Time
 	IterationDays int
 }
 
 type project struct {
 	name                  string
-	goal                  int
+	target                int
 	totalAchievedHour     int
 	iterationAchievedHour int
 	lastDay               time.Time
