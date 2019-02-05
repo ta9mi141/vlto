@@ -32,7 +32,7 @@ func Unmarshal() ([]config, error) {
 	return configs, nil
 }
 
-func getIterationSpan(today time.Time, iterationDays int) dateSpan {
-	iterationStartDate := today.AddDate(0, 0, -iterationDays)
-	return dateSpan{since: iterationStartDate, until: today}
+func getIterationSpan(now time.Time, iterationDays int) dateSpan {
+	iterationStartDate := now.AddDate(0, 0, -iterationDays)
+	return dateSpan{since: iterationStartDate, until: now}
 }
