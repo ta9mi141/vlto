@@ -36,7 +36,7 @@ func TestDivideElapsedYears(t *testing.T) {
 			until: today,
 		},
 	}
-	elapsedYears := divideElapsedYears(startDate)
+	elapsedYears := divideElapsedYears(startDate, today)
 	if !reflect.DeepEqual(elapsedYears, expected) {
 		t.Error()
 	}
