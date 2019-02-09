@@ -1,6 +1,7 @@
 package project
 
 import (
+	"github.com/it-akumi/toggl-go/reports"
 	"github.com/spf13/viper"
 	"time"
 )
@@ -55,4 +56,23 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 			return elapsedYears
 		}
 	}
+}
+
+func fetchAchievedSeconds(projectName string, span dateSpan) (int, error) {
+	client := reports.NewClient(viper.GetString("apiToken"))
+	resp, err := client.GetSummary(&reports.RequestParameters{
+		UserAgent:   "vlto",
+		WorkSpaceId: viper.GetString("workSpaceId"),
+		Since:       span.since,
+		Until:       span.until,
+	})
+	if err != nil {
+		return 0, err
+	}
+	for _, datum := range resp.Data {
+		if datum.Title.Project == projectName {
+			return datum.Time / 1000, nil // Time entries are in milliseconds
+		}
+	}
+	return 0, nil
 }
