@@ -18,7 +18,7 @@ type project struct {
 	target                int
 	totalAchievedHour     int
 	iterationAchievedHour int
-	lastDay               time.Time
+	lastDate              time.Time
 }
 
 type dateSpan struct {
