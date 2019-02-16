@@ -6,11 +6,11 @@ import (
 	"os"
 )
 
-func Init(cfgFile string) {
+func Init(cfgFilePath string) {
 	viper.AddConfigPath("$HOME/.config") // Adding $HOME/.config as first search path
 	viper.SetConfigName("vlto")          // Name of config file (without extention)
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
+	if cfgFilePath != "" {
+		viper.SetConfigFile(cfgFilePath)
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
