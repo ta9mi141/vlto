@@ -33,7 +33,10 @@ func init() {
 }
 
 func initConfig() {
-	config.Init(cfgFilePath)
+	if err := config.Init(cfgFilePath); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func Execute() {
