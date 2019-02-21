@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -10,31 +11,34 @@ import (
 const config = `
 ApiToken = "0123456789abcdefghijklmnopqrstuv"
 WorkSpaceId = "1234567"
-
-[[Projects]]
-Name = "Sample Project 1"
-Target = 1000
-StartDate = 2016-10-11T00:00:00+00:00
-IterationDays = 7
-
-[[Projects]]
-Name = "Sample Project 2"
-Target = 2000
-StartDate = 2019-01-01T00:00:00+00:00
-IterationDays = 14
 `
 
 func TestInitDefaultConfigFilePath(t *testing.T) {
 	defaultConfigFilePath := strings.Replace(
 		defaultConfigFilePath, "$HOME", os.Getenv("HOME"), -1,
 	)
+
+	// If there already exists config file, rename it before test
+	if _, err := os.Stat(defaultConfigFilePath); err == nil {
+		os.Rename(defaultConfigFilePath, defaultConfigFilePath+".tmp")
+		defer os.Rename(defaultConfigFilePath+".tmp", defaultConfigFilePath)
+	}
+
 	err := ioutil.WriteFile(defaultConfigFilePath, []byte(config), 0644)
+	defer os.Remove(defaultConfigFilePath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(defaultConfigFilePath)
 
 	if err := Init(""); err != nil {
+		t.Error(err)
+	}
+
+	if viper.GetString("ApiToken") != "0123456789abcdefghijklmnopqrstuv" {
+		t.Error(err)
+	}
+
+	if viper.GetString("WorkSpaceId") != "1234567" {
 		t.Error(err)
 	}
 }
@@ -48,6 +52,14 @@ func TestInitCustomConfigFilePath(t *testing.T) {
 	defer os.Remove(customConfigFilePath)
 
 	if err := Init(customConfigFilePath); err != nil {
+		t.Error(err)
+	}
+
+	if viper.GetString("ApiToken") != "0123456789abcdefghijklmnopqrstuv" {
+		t.Error(err)
+	}
+
+	if viper.GetString("WorkSpaceId") != "1234567" {
 		t.Error(err)
 	}
 }
