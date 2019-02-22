@@ -14,7 +14,7 @@ WorkSpaceId = "1234567"
 Name = "Sample Project 1"
 
 # Working hours you try to achieve
-Target = 1000
+TargetHour = 1000
 
 # A date when aggregation of time entries starts
 # Time and timezone are necessary even though they aren't used by application
@@ -25,6 +25,6 @@ IterationDays = 7
 
 [[Projects]]
 Name = "Sample Project 2"
-Target = 2000
+TargetHour = 2000
 StartDate = 2019-01-01T00:00:00+00:00
 IterationDays = 14

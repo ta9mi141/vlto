@@ -8,14 +8,14 @@ import (
 
 type config struct {
 	Name          string
-	Target        int
+	TargetHour    int
 	StartDate     time.Time
 	IterationDays int
 }
 
 type project struct {
 	name                  string
-	target                int
+	targetHour            int
 	totalAchievedHour     int
 	iterationAchievedHour int
 	lastDate              time.Time
