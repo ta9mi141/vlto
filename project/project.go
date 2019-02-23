@@ -13,12 +13,12 @@ type config struct {
 	IterationDays int
 }
 
-type project struct {
-	name                  string
-	targetHour            int
-	totalAchievedHour     int
-	iterationAchievedHour int
-	lastDate              time.Time
+type projectStatus struct {
+	name                 string
+	targetHour           int
+	totalAchievedSec     int
+	iterationAchievedSec int
+	lastDate             string
 }
 
 type dateSpan struct {
@@ -58,7 +58,7 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 	}
 }
 
-func fetchAchievedSeconds(projectName string, span dateSpan) (int, error) {
+func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
 	client := reports.NewClient(viper.GetString("apiToken"))
 	resp, err := client.GetSummary(&reports.RequestParameters{
 		UserAgent:   "vlto",
