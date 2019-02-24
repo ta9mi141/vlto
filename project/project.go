@@ -1,6 +1,7 @@
 package project
 
 import (
+	"errors"
 	"github.com/it-akumi/toggl-go/reports"
 	"github.com/spf13/viper"
 	"time"
@@ -75,4 +76,20 @@ func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
 		}
 	}
 	return 0, nil
+}
+
+func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int) (string, error) {
+	if iterationAchievedSec < 0 || iterationDays <= 0 {
+		return "", errors.New("Invalid iterationAchievedSec or iterationDays")
+	}
+	if unachievedSec <= 0 {
+		return "Finished", nil
+	}
+	if iterationAchievedSec == 0 {
+		return "Never", nil
+	}
+
+	// Round up unachievedSec / iterationAchievedSec
+	remainingDays := (unachievedSec + iterationAchievedSec - 1) / iterationAchievedSec * iterationDays
+	return time.Now().AddDate(0, 0, remainingDays).Format("2006-01-02"), nil
 }
