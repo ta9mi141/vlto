@@ -93,3 +93,41 @@ func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, no
 	remainingDays := (unachievedSec + iterationAchievedSec - 1) / iterationAchievedSec * iterationDays
 	return now.AddDate(0, 0, remainingDays).Format("2006-01-02"), nil
 }
+
+func GenerateProjectStatus(c *config) (*projectStatus, error) {
+	totalAchievedSec := 0
+	elapsedYears := divideElapsedYears(c.StartDate, time.Now())
+	for _, year := range elapsedYears {
+		achievedSec, err := fetchAchievedSec(c.Name, year)
+		if err != nil {
+			return nil, err
+		}
+		totalAchievedSec += achievedSec
+	}
+
+	iterationAchievedSec, err := fetchAchievedSec(
+		c.Name,
+		getIterationSpan(time.Now(), c.IterationDays),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	lastDate, err := estimateLastDate(
+		c.TargetHour*3600-totalAchievedSec,
+		iterationAchievedSec,
+		c.IterationDays,
+		time.Now(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &projectStatus{
+		name:                 c.Name,
+		targetHour:           c.TargetHour,
+		totalAchievedSec:     totalAchievedSec,
+		iterationAchievedSec: iterationAchievedSec,
+		lastDate:             lastDate,
+	}, nil
+}
