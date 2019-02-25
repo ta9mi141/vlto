@@ -78,7 +78,7 @@ func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
 	return 0, nil
 }
 
-func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int) (string, error) {
+func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, now time.Time) (string, error) {
 	if iterationAchievedSec < 0 || iterationDays <= 0 {
 		return "", errors.New("Invalid iterationAchievedSec or iterationDays")
 	}
@@ -91,5 +91,5 @@ func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int) (s
 
 	// Round up unachievedSec / iterationAchievedSec
 	remainingDays := (unachievedSec + iterationAchievedSec - 1) / iterationAchievedSec * iterationDays
-	return time.Now().AddDate(0, 0, remainingDays).Format("2006-01-02"), nil
+	return now.AddDate(0, 0, remainingDays).Format("2006-01-02"), nil
 }
