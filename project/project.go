@@ -14,7 +14,7 @@ type config struct {
 	IterationDays int
 }
 
-type projectStatus struct {
+type status struct {
 	name                 string
 	targetHour           int
 	totalAchievedSec     int
@@ -94,7 +94,7 @@ func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, no
 	return now.AddDate(0, 0, remainingDays).Format("2006-01-02"), nil
 }
 
-func GenerateProjectStatus(c *config) (*projectStatus, error) {
+func GenerateStatus(c *config) (*status, error) {
 	totalAchievedSec := 0
 	elapsedYears := divideElapsedYears(c.StartDate, time.Now())
 	for _, year := range elapsedYears {
@@ -123,7 +123,7 @@ func GenerateProjectStatus(c *config) (*projectStatus, error) {
 		return nil, err
 	}
 
-	return &projectStatus{
+	return &status{
 		name:                 c.Name,
 		targetHour:           c.TargetHour,
 		totalAchievedSec:     totalAchievedSec,

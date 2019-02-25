@@ -22,7 +22,7 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		for _, config := range projectConfigs {
-			status, err := project.GenerateProjectStatus(&config)
+			status, err := project.GenerateStatus(&config)
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
