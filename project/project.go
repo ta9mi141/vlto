@@ -2,6 +2,7 @@ package project
 
 import (
 	"errors"
+	"fmt"
 	"github.com/it-akumi/toggl-go/reports"
 	"github.com/spf13/viper"
 	"time"
@@ -130,4 +131,18 @@ func GenerateStatus(c *config) (*status, error) {
 		iterationAchievedSec: iterationAchievedSec,
 		lastDate:             lastDate,
 	}, nil
+}
+
+func StatusHeader() []string {
+	return []string{"Name", "Target", "Total", "Iteration", "LastDate"}
+}
+
+func (s *status) Slice() []string {
+	return []string{
+		s.name,
+		fmt.Sprintf("%d", s.targetHour),
+		fmt.Sprintf("%.2f", float64(s.totalAchievedSec)/3600),
+		fmt.Sprintf("%.2f", float64(s.iterationAchievedSec)/3600),
+		s.lastDate,
+	}
 }

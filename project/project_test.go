@@ -65,3 +65,17 @@ func TestEstimateLastDate(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestSlice(t *testing.T) {
+	status := &status{
+		name:                 "Status",
+		targetHour:           100,
+		totalAchievedSec:     7200,
+		iterationAchievedSec: 1800,
+		lastDate:             "2019-02-26",
+	}
+	expected := []string{"Status", "100", "2.00", "0.50", "2019-02-26"}
+	if !reflect.DeepEqual(status.Slice(), expected) {
+		t.Error()
+	}
+}

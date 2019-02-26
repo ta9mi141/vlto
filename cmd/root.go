@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/it-akumi/vlto/config"
 	"github.com/it-akumi/vlto/project"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -16,6 +17,8 @@ var rootCmd = &cobra.Command{
 	Short:   "vlto shows velocity of your projects of Toggl",
 	Version: "0.0",
 	Run: func(cmd *cobra.Command, args []string) {
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader(project.StatusHeader())
 		projectConfigs, err := project.Unmarshal()
 		if err != nil {
 			fmt.Println(err)
@@ -27,8 +30,9 @@ var rootCmd = &cobra.Command{
 				fmt.Println(err)
 				os.Exit(1)
 			}
-			fmt.Printf("%+v\n", status)
+			table.Append(status.Slice())
 		}
+		table.Render()
 	},
 }
 
