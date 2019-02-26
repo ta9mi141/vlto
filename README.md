@@ -9,8 +9,7 @@ If you use Toggl to track working hours of some projects, this tool can show you
 
 ## Requirements
 
-* Go 1.x
-* Make
+* Go
 
 ## Author
 
