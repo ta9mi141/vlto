@@ -11,6 +11,12 @@ If you use Toggl to track working hours of some projects, this tool can show you
 
 * Go
 
+## Install
+
+```
+$ go get -u github.com/it-akumi/vlto
+```
+
 ## Author
 
 [Takumi Ishii](https://github.com/it-akumi)
