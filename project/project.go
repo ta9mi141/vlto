@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/it-akumi/toggl-go/reports"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/viper"
+	"os"
 	"time"
 )
 
@@ -27,7 +29,7 @@ type dateSpan struct {
 	since, until time.Time
 }
 
-func Unmarshal() ([]config, error) {
+func unmarshal() ([]config, error) {
 	var configs []config
 	if err := viper.UnmarshalKey("Projects", &configs); err != nil {
 		return configs, err
@@ -95,7 +97,7 @@ func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, no
 	return now.AddDate(0, 0, remainingDays).Format("2006-01-02"), nil
 }
 
-func GenerateStatus(c *config) (*status, error) {
+func generateStatus(c *config) (*status, error) {
 	totalAchievedSec := 0
 	elapsedYears := divideElapsedYears(c.StartDate, time.Now())
 	for _, year := range elapsedYears {
@@ -133,16 +135,47 @@ func GenerateStatus(c *config) (*status, error) {
 	}, nil
 }
 
-func StatusHeader() []string {
-	return []string{"Name", "Target", "Total", "Iteration", "LastDate"}
+func toTable(projectsStatus []status) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Name", "Target", "Total", "Iteration", "LastDate"})
+	for _, status := range projectsStatus {
+		table.Append([]string{
+			status.name,
+			fmt.Sprintf("%d", status.targetHour),
+			fmt.Sprintf("%.2f", float64(status.totalAchievedSec)/3600),
+			fmt.Sprintf("%.2f", float64(status.iterationAchievedSec)/3600),
+			status.lastDate,
+		})
+	}
+	table.Render()
 }
 
-func (s *status) Slice() []string {
-	return []string{
-		s.name,
-		fmt.Sprintf("%d", s.targetHour),
-		fmt.Sprintf("%.2f", float64(s.totalAchievedSec)/3600),
-		fmt.Sprintf("%.2f", float64(s.iterationAchievedSec)/3600),
-		s.lastDate,
+func Show(format string) error {
+	if !(format == "" || format == "table" || format == "json") {
+		return fmt.Errorf("Valid format is 'table' or 'json'")
 	}
+
+	projectsConfig, err := unmarshal()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	projectsStatus := []status{}
+	for _, config := range projectsConfig {
+		status, err := generateStatus(&config)
+		if err != nil {
+			return err
+		}
+		projectsStatus = append(projectsStatus, *status)
+	}
+
+	switch format {
+	case "table":
+		toTable(projectsStatus)
+	default:
+		toTable(projectsStatus)
+	}
+
+	return nil
 }
