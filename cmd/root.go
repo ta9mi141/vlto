@@ -11,6 +11,7 @@ import (
 
 // flags
 var cfgFilePath string
+var format string
 
 var rootCmd = &cobra.Command{
 	Use:     "vlto",
@@ -43,6 +44,12 @@ func init() {
 		"config",
 		"",
 		"config file (default is $HOME/.config/vlto.toml)",
+	)
+	rootCmd.PersistentFlags().StringVar(
+		&format,
+		"format",
+		"",
+		"the output format ('table' or 'text' or 'json')",
 	)
 }
 
