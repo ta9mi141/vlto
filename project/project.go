@@ -1,6 +1,7 @@
 package project
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/it-akumi/toggl-go/reports"
@@ -18,11 +19,11 @@ type config struct {
 }
 
 type status struct {
-	name                 string
-	targetHour           int
-	totalAchievedSec     int
-	iterationAchievedSec int
-	lastDate             string
+	Name                  string
+	TargetHour            int
+	TotalAchievedHour     float64
+	IterationAchievedHour float64
+	LastDate              string
 }
 
 type dateSpan struct {
@@ -127,11 +128,11 @@ func generateStatus(c *config) (*status, error) {
 	}
 
 	return &status{
-		name:                 c.Name,
-		targetHour:           c.TargetHour,
-		totalAchievedSec:     totalAchievedSec,
-		iterationAchievedSec: iterationAchievedSec,
-		lastDate:             lastDate,
+		Name:                  c.Name,
+		TargetHour:            c.TargetHour,
+		TotalAchievedHour:     float64(totalAchievedSec) / 3600,
+		IterationAchievedHour: float64(iterationAchievedSec) / 3600,
+		LastDate:              lastDate,
 	}, nil
 }
 
@@ -140,14 +141,23 @@ func toTable(projectsStatus []status) {
 	table.SetHeader([]string{"Name", "Target", "Total", "Iteration", "LastDate"})
 	for _, status := range projectsStatus {
 		table.Append([]string{
-			status.name,
-			fmt.Sprintf("%d", status.targetHour),
-			fmt.Sprintf("%.2f", float64(status.totalAchievedSec)/3600),
-			fmt.Sprintf("%.2f", float64(status.iterationAchievedSec)/3600),
-			status.lastDate,
+			status.Name,
+			fmt.Sprintf("%d", status.TargetHour),
+			fmt.Sprintf("%f", status.TotalAchievedHour),
+			fmt.Sprintf("%f", status.IterationAchievedHour),
+			status.LastDate,
 		})
 	}
 	table.Render()
+}
+
+func toJSON(projectsStatus []status) error {
+	output, err := json.Marshal(projectsStatus)
+	if err != nil {
+		return err
+	}
+	os.Stdout.Write(output)
+	return nil
 }
 
 func Show(format string) error {
@@ -173,6 +183,10 @@ func Show(format string) error {
 	switch format {
 	case "table":
 		toTable(projectsStatus)
+	case "json":
+		if err := toJSON(projectsStatus); err != nil {
+			return err
+		}
 	default:
 		toTable(projectsStatus)
 	}
