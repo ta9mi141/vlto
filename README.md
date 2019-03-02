@@ -11,6 +11,22 @@ If you use Toggl to track working hours of some projects, this tool can show you
 
 * Go
 
+## Usage
+
+```
+$ vlto --help
+vlto shows velocity of your projects of Toggl
+
+Usage:
+  vlto [flags]
+
+Flags:
+      --config string   config file (default is $HOME/.config/vlto.toml)
+      --format string   the output format 'table' (default) or 'json'
+  -h, --help            help for vlto
+      --version         version for vlto
+```
+
 ## Install
 
 ```
