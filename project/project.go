@@ -20,9 +20,9 @@ type config struct {
 
 type status struct {
 	Name                  string
-	TargetHour            int
-	TotalAchievedHour     float64
-	IterationAchievedHour float64
+	TargetHour            string
+	TotalAchievedHour     string
+	IterationAchievedHour string
 	LastDate              string
 }
 
@@ -129,9 +129,9 @@ func generateStatus(c *config) (*status, error) {
 
 	return &status{
 		Name:                  c.Name,
-		TargetHour:            c.TargetHour,
-		TotalAchievedHour:     float64(totalAchievedSec) / 3600,
-		IterationAchievedHour: float64(iterationAchievedSec) / 3600,
+		TargetHour:            fmt.Sprintf("%d", c.TargetHour),
+		TotalAchievedHour:     fmt.Sprintf("%.1f", float64(totalAchievedSec)/3600),
+		IterationAchievedHour: fmt.Sprintf("%.1f", float64(iterationAchievedSec)/3600),
 		LastDate:              lastDate,
 	}, nil
 }
@@ -142,9 +142,9 @@ func toTable(projectsStatus []status) {
 	for _, status := range projectsStatus {
 		table.Append([]string{
 			status.Name,
-			fmt.Sprintf("%d", status.TargetHour),
-			fmt.Sprintf("%f", status.TotalAchievedHour),
-			fmt.Sprintf("%f", status.IterationAchievedHour),
+			status.TargetHour,
+			status.TotalAchievedHour,
+			status.IterationAchievedHour,
 			status.LastDate,
 		})
 	}
