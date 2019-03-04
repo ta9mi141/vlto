@@ -5,7 +5,10 @@ vlto shows velocity of your projects of [Toggl](https://toggl.com)
 
 ## Description
 
-If you use Toggl to track working hours of some projects, this tool can show you velocity of them.
+If you use Toggl to track working hours of some projects, vlto can show you velocity of them.
+
+Since vlto needs config, you must set your projects' config at first.
+The config is written in TOML (sample_config.toml is an example).
 
 ## Requirements
 
