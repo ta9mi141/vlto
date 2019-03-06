@@ -11,6 +11,27 @@ This tool calls Toggl API and gets total and iterative achieved hours.
 Then it indicates when each project will be finished if you keep
 the pace of this iteration.
 
+## Configuration
+
+Example:
+
+```
+ApiToken = "0123456789abcdefghijklmnopqrstuv"
+WorkSpaceId = "1234567"
+
+[[Projects]]
+Name = "Sample Project 1"
+TargetHour = 1000
+StartDate = 2016-10-11T00:00:00+00:00
+IterationDays = 7
+
+[[Projects]]
+Name = "Sample Project 2"
+TargetHour = 2000
+StartDate = 2019-01-01T00:00:00+00:00
+IterationDays = 14
+```
+
 ## Requirements
 
 * Go
