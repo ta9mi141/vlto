@@ -9,9 +9,14 @@ If you use Toggl to track working hours of some projects, vlto can show you velo
 
 This tool calls Toggl API and gets total and iterative achieved hours.
 Then it indicates when each project will be finished if you keep
-the pace of this iteration.
+the pace of the iteration.
 
 ## Configuration
+
+vlto requires a configuration written in [TOML](https://github.com/toml-lang/toml).
+
+This tool uses `$HOME/.config/vlto.toml` in defalut but there is `--config` option
+so that you can put your config anywhere you want and specify the path.
 
 Example:
 
