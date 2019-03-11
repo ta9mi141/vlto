@@ -7,7 +7,7 @@ ApiToken = "0123456789abcdefghijklmnopqrstuv"
 WorkSpaceId = "1234567"
 
 
-# Each project settings
+# Settings of each project
 [[Projects]]
 
 # Project name defined in Toggl
