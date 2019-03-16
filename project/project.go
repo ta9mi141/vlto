@@ -65,11 +65,13 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 
 func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
 	client := reports.NewClient(viper.GetString("apiToken"))
-	resp, err := client.GetSummary(&reports.RequestParameters{
-		UserAgent:   "vlto",
-		WorkSpaceId: viper.GetString("workSpaceId"),
-		Since:       span.since,
-		Until:       span.until,
+	resp, err := client.GetSummary(&reports.SummaryRequestParameters{
+		StandardRequestParameters: &reports.StandardRequestParameters{
+			UserAgent:   "vlto",
+			WorkSpaceId: viper.GetString("workSpaceId"),
+			Since:       span.since,
+			Until:       span.until,
+		},
 	})
 	if err != nil {
 		return 0, err
