@@ -30,6 +30,15 @@ type dateSpan struct {
 	since, until time.Time
 }
 
+type summaryReport struct {
+	Data []struct {
+		Title struct {
+			Project string `json:"project"`
+		} `json:"title"`
+		Time int `json:"time"`
+	} `json:"data"`
+}
+
 func unmarshal() ([]config, error) {
 	var configs []config
 	if err := viper.UnmarshalKey("Projects", &configs); err != nil {
@@ -65,18 +74,19 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 
 func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
 	client := reports.NewClient(viper.GetString("apiToken"))
-	resp, err := client.GetSummary(&reports.SummaryRequestParameters{
+	summaryReport := new(summaryReport)
+	err := client.GetSummary(&reports.SummaryRequestParameters{
 		StandardRequestParameters: &reports.StandardRequestParameters{
 			UserAgent:   "vlto",
 			WorkSpaceId: viper.GetString("workSpaceId"),
 			Since:       span.since,
 			Until:       span.until,
 		},
-	})
+	}, summaryReport)
 	if err != nil {
 		return 0, err
 	}
-	for _, datum := range resp.Data {
+	for _, datum := range summaryReport.Data {
 		if datum.Title.Project == projectName {
 			return datum.Time / 1000, nil // Time entries are in milliseconds
 		}
