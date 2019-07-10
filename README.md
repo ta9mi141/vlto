@@ -28,6 +28,7 @@ Flags:
       --config string   config file (default is $HOME/.config/vlto.toml)
       --format string   the output format 'table' (default) or 'json'
   -h, --help            help for vlto
+      --proxy string    the URL of an environment variable HTTPS_PROXY
       --version         version for vlto
 ```
 
