@@ -1,14 +1,16 @@
 package project
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/it-akumi/toggl-go/reports"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/viper"
-	"os"
-	"time"
 )
 
 type config struct {
@@ -75,14 +77,18 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
 	client := reports.NewClient(viper.GetString("apiToken"))
 	summaryReport := new(summaryReport)
-	err := client.GetSummary(&reports.SummaryRequestParameters{
-		StandardRequestParameters: &reports.StandardRequestParameters{
-			UserAgent:   "vlto",
-			WorkSpaceId: viper.GetString("workSpaceId"),
-			Since:       span.since,
-			Until:       span.until,
+	err := client.GetSummary(
+		context.Background(),
+		&reports.SummaryRequestParameters{
+			StandardRequestParameters: &reports.StandardRequestParameters{
+				UserAgent:   "vlto",
+				WorkSpaceId: viper.GetString("workSpaceId"),
+				Since:       span.since,
+				Until:       span.until,
+			},
 		},
-	}, summaryReport)
+		summaryReport,
+	)
 	if err != nil {
 		return 0, err
 	}
