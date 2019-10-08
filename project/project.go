@@ -154,6 +154,11 @@ func generateStatus(c *config) (*status, error) {
 	}, nil
 }
 
+const (
+	TableFormat string = "table"
+	JsonFormat  string = "json"
+)
+
 func toTable(projectsStatus []status) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Name", "Target", "Total", "Iteration", "LastDate"})
@@ -179,8 +184,8 @@ func toJSON(projectsStatus []status) error {
 }
 
 func Show(format string) error {
-	if !(format == "" || format == "table" || format == "json") {
-		return fmt.Errorf("Valid format is 'table' or 'json'")
+	if !(format == "" || format == TableFormat || format == JsonFormat) {
+		return fmt.Errorf(`Valid format is "%s" or "%s"`, TableFormat, JsonFormat)
 	}
 
 	projectsConfig, err := unmarshal()
@@ -199,9 +204,9 @@ func Show(format string) error {
 	}
 
 	switch format {
-	case "table":
+	case TableFormat:
 		toTable(projectsStatus)
-	case "json":
+	case JsonFormat:
 		if err := toJSON(projectsStatus); err != nil {
 			return err
 		}

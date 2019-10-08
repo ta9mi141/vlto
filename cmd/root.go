@@ -45,7 +45,7 @@ func init() {
 		&format,
 		"format",
 		"",
-		"the output format 'table' (default) or 'json'",
+		fmt.Sprintf(`the output format "%s" or "%s"`, project.TableFormat, project.JsonFormat),
 	)
 	rootCmd.PersistentFlags().StringVar(
 		&httpsProxy,
