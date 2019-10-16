@@ -74,7 +74,7 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 	}
 }
 
-func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
+func fetchAchievedSec(projectName string, span dateSpan, achievedSecChan chan<- int, errorChan chan<- error) {
 	client := reports.NewClient(viper.GetString("apiToken"))
 	summaryReport := new(summaryReport)
 	err := client.GetSummary(
@@ -90,14 +90,17 @@ func fetchAchievedSec(projectName string, span dateSpan) (int, error) {
 		summaryReport,
 	)
 	if err != nil {
-		return 0, err
+		errorChan <- err
+		return
 	}
 	for _, datum := range summaryReport.Data {
 		if datum.Title.Project == projectName {
-			return datum.Time / 1000, nil // Time entries are in milliseconds
+			achievedSecChan <- datum.Time / 1000 // Time entries are in milliseconds
+			return
 		}
 	}
-	return 0, nil
+	achievedSecChan <- 0
+	return
 }
 
 func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, now time.Time) (string, error) {
@@ -117,21 +120,36 @@ func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, no
 }
 
 func generateStatus(c *config) (*status, error) {
-	totalAchievedSec := 0
+	achievedSecChan := make(chan int)
+	errorChan := make(chan error)
+
 	elapsedYears := divideElapsedYears(c.StartDate, time.Now())
 	for _, year := range elapsedYears {
-		achievedSec, err := fetchAchievedSec(c.Name, year)
-		if err != nil {
-			return nil, err
-		}
-		totalAchievedSec += achievedSec
+		go fetchAchievedSec(c.Name, year, achievedSecChan, errorChan)
 	}
 
-	iterationAchievedSec, err := fetchAchievedSec(
+	totalAchievedSec := 0
+	for i := 0; i < len(elapsedYears); i++ {
+		select {
+		case achievedSec := <-achievedSecChan:
+			totalAchievedSec += achievedSec
+		case err := <-errorChan:
+			return nil, err
+		}
+	}
+
+	go fetchAchievedSec(
 		c.Name,
 		getIterationSpan(time.Now(), c.IterationDays),
+		achievedSecChan,
+		errorChan,
 	)
-	if err != nil {
+
+	iterationAchievedSec := 0
+	select {
+	case achievedSec := <-achievedSecChan:
+		iterationAchievedSec = achievedSec
+	case err := <-errorChan:
 		return nil, err
 	}
 
