@@ -119,13 +119,13 @@ func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, no
 	return now.AddDate(0, 0, remainingDays).Format("2006-01-02"), nil
 }
 
-func generateStatus(c *config) (*status, error) {
+func generateStatus(c config, statusChan chan<- *status, errorChan chan<- error) {
 	achievedSecChan := make(chan int)
-	errorChan := make(chan error)
+	fetchErrorChan := make(chan error)
 
 	elapsedYears := divideElapsedYears(c.StartDate, time.Now())
 	for _, year := range elapsedYears {
-		go fetchAchievedSec(c.Name, year, achievedSecChan, errorChan)
+		go fetchAchievedSec(c.Name, year, achievedSecChan, fetchErrorChan)
 	}
 
 	totalAchievedSec := 0
@@ -133,8 +133,9 @@ func generateStatus(c *config) (*status, error) {
 		select {
 		case achievedSec := <-achievedSecChan:
 			totalAchievedSec += achievedSec
-		case err := <-errorChan:
-			return nil, err
+		case err := <-fetchErrorChan:
+			errorChan <- err
+			return
 		}
 	}
 
@@ -142,15 +143,16 @@ func generateStatus(c *config) (*status, error) {
 		c.Name,
 		getIterationSpan(time.Now(), c.IterationDays),
 		achievedSecChan,
-		errorChan,
+		fetchErrorChan,
 	)
 
 	iterationAchievedSec := 0
 	select {
 	case achievedSec := <-achievedSecChan:
 		iterationAchievedSec = achievedSec
-	case err := <-errorChan:
-		return nil, err
+	case err := <-fetchErrorChan:
+		errorChan <- err
+		return
 	}
 
 	lastDate, err := estimateLastDate(
@@ -160,16 +162,18 @@ func generateStatus(c *config) (*status, error) {
 		time.Now(),
 	)
 	if err != nil {
-		return nil, err
+		errorChan <- err
+		return
 	}
 
-	return &status{
+	statusChan <- &status{
 		Name:                  c.Name,
 		TargetHour:            fmt.Sprintf("%d", c.TargetHour),
 		TotalAchievedHour:     fmt.Sprintf("%.1f", float64(totalAchievedSec)/3600),
 		IterationAchievedHour: fmt.Sprintf("%.1f", float64(iterationAchievedSec)/3600),
 		LastDate:              lastDate,
-	}, nil
+	}
+	return
 }
 
 const (
@@ -212,13 +216,20 @@ func Show(format string) error {
 		os.Exit(1)
 	}
 
-	projectsStatus := []status{}
+	statusChan := make(chan *status)
+	errorChan := make(chan error)
 	for _, config := range projectsConfig {
-		status, err := generateStatus(&config)
-		if err != nil {
+		go generateStatus(config, statusChan, errorChan)
+	}
+
+	projectsStatus := []status{}
+	for i := 0; i < len(projectsConfig); i++ {
+		select {
+		case status := <-statusChan:
+			projectsStatus = append(projectsStatus, *status)
+		case err := <-errorChan:
 			return err
 		}
-		projectsStatus = append(projectsStatus, *status)
 	}
 
 	switch format {
