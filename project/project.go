@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/it-akumi/toggl-go/reports"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/viper"
@@ -77,19 +79,36 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 func fetchAchievedSec(projectName string, span dateSpan, achievedSecChan chan<- int, errorChan chan<- error) {
 	client := reports.NewClient(viper.GetString("apiToken"))
 	summaryReport := new(summaryReport)
-	err := client.GetSummary(
-		context.Background(),
-		&reports.SummaryRequestParameters{
-			StandardRequestParameters: &reports.StandardRequestParameters{
-				UserAgent:   "vlto",
-				WorkSpaceId: viper.GetString("workSpaceId"),
-				Since:       span.since,
-				Until:       span.until,
+
+	// operation is retried using Exponential Backoff and Jitter
+	// when client.GetSummary fails due to '429 Too Many Requests'
+	operation := func() error {
+		err := client.GetSummary(
+			context.Background(),
+			&reports.SummaryRequestParameters{
+				StandardRequestParameters: &reports.StandardRequestParameters{
+					UserAgent:   "vlto",
+					WorkSpaceId: viper.GetString("workSpaceId"),
+					Since:       span.since,
+					Until:       span.until,
+				},
 			},
-		},
-		summaryReport,
-	)
-	if err != nil {
+			summaryReport,
+		)
+
+		if err != nil {
+			var reportsError reports.Error
+			if errors.As(err, &reportsError) && reportsError.StatusCode() == http.StatusTooManyRequests {
+				return err
+			} else {
+				// operation should not be retried when client.GetSummary returns
+				// an error except '429 Too Many Requests'
+				return backoff.Permanent(err)
+			}
+		}
+		return nil
+	}
+	if err := backoff.Retry(operation, backoff.NewExponentialBackOff()); err != nil {
 		errorChan <- err
 		return
 	}
