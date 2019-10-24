@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -77,40 +76,13 @@ func divideElapsedYears(startDate, now time.Time) []dateSpan {
 	}
 }
 
-type cache struct {
-	summaryReport map[dateSpan]*summaryReport
-	mux           sync.Mutex
-}
-
-func (c *cache) write(span dateSpan, summaryReport *summaryReport) {
-	c.mux.Lock()
-	defer c.mux.Unlock()
-	c.summaryReport[span] = summaryReport
-}
-
-func (c *cache) read(span dateSpan) (*summaryReport, bool) {
-	c.mux.Lock()
-	defer c.mux.Unlock()
-	if report, ok := c.summaryReport[span]; ok {
-		return report, true
-	} else {
-		return nil, false
-	}
-}
-
-func fetchAchievedSec(c *cache, projectName string, span dateSpan, achievedSecChan chan<- int, errorChan chan<- error) {
-	if summaryReport, hit := c.read(span); hit {
-		achievedSecChan <- getAchievedSec(summaryReport, projectName)
-		return
-	}
-
+func fetchAchievedSec(projectName string, span dateSpan, achievedSecChan chan<- int, errorChan chan<- error) {
 	summaryReport, err := fetchSummaryReport(span)
 	if err != nil {
 		errorChan <- err
 		return
 	}
 	achievedSecChan <- getAchievedSec(summaryReport, projectName)
-	c.write(span, summaryReport)
 	return
 }
 
@@ -180,11 +152,10 @@ func estimateLastDate(unachievedSec, iterationAchievedSec, iterationDays int, no
 func generateStatus(c config, statusChan chan<- *status, errorChan chan<- error) {
 	achievedSecChan := make(chan int)
 	fetchErrorChan := make(chan error)
-	cache := &cache{summaryReport: make(map[dateSpan]*summaryReport)}
 
 	elapsedYears := divideElapsedYears(c.StartDate, time.Now())
 	for _, year := range elapsedYears {
-		go fetchAchievedSec(cache, c.Name, year, achievedSecChan, fetchErrorChan)
+		go fetchAchievedSec(c.Name, year, achievedSecChan, fetchErrorChan)
 	}
 
 	totalAchievedSec := 0
@@ -199,7 +170,6 @@ func generateStatus(c config, statusChan chan<- *status, errorChan chan<- error)
 	}
 
 	go fetchAchievedSec(
-		cache,
 		c.Name,
 		getIterationSpan(time.Now(), c.IterationDays),
 		achievedSecChan,
