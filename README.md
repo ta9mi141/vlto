@@ -11,6 +11,10 @@ This tool calls Toggl API and gets total and iterative achieved hours.
 Then it indicates when each project will be finished if you keep
 the pace of the iteration.
 
+## Demo
+
+![vlto.gif](vlto.gif)
+
 ## Requirements
 
 * Go
