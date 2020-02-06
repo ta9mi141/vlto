@@ -10,7 +10,7 @@ import (
 
 const config = `
 ApiToken = "0123456789abcdefghijklmnopqrstuv"
-WorkSpaceId = "1234567"
+WorkspaceId = "1234567"
 `
 
 func TestInitDefaultConfigFilePath(t *testing.T) {
@@ -38,7 +38,7 @@ func TestInitDefaultConfigFilePath(t *testing.T) {
 		t.Error(err)
 	}
 
-	if viper.GetString("WorkSpaceId") != "1234567" {
+	if viper.GetString("WorkspaceId") != "1234567" {
 		t.Error(err)
 	}
 }
@@ -59,7 +59,7 @@ func TestInitCustomConfigFilePath(t *testing.T) {
 		t.Error(err)
 	}
 
-	if viper.GetString("WorkSpaceId") != "1234567" {
+	if viper.GetString("WorkspaceId") != "1234567" {
 		t.Error(err)
 	}
 }

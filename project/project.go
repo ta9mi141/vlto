@@ -98,7 +98,7 @@ func fetchSummaryReport(span dateSpan) (*summaryReport, error) {
 			&reports.SummaryRequestParameters{
 				StandardRequestParameters: &reports.StandardRequestParameters{
 					UserAgent:   "vlto",
-					WorkSpaceId: viper.GetString("workSpaceId"),
+					WorkspaceId: viper.GetString("workspaceId"),
 					Since:       span.since,
 					Until:       span.until,
 				},
